@@ -1,0 +1,216 @@
+---
+title: "HomeWork-2"
+---
+Functions
+
+# Para crear una función se usa la palabra reservada function. A continuación se enumeran los parámetros formales de la función separados por comas y encerrados entre paréntesis. Después viene el código de la función. Si el código tiene más de una instrucción, hay que encerrarlo entre llaves.
+
+#Estructura General de una Función
+#Las funciones poseen 3 partes:
+
+# El cuerpo (body)
+# Los argumentos (formals)
+# El ambiente (environment)
+ 
+f <- function(x, y) { x + y }
+
+body(f)
+{
+ x + y
+}
+
+formals(f)
+$x
+$y
+
+environment(f)
+<environment: R_GlobalEnv>
+
+# Ejemplo: Construir una función que reciba dos números y que entregue la suma de estos números.
+
+```{r}
+suma <- function(x, y) {
+  resultado <- x + y
+  return(resultado)
+}
+
+suma(x=4, y=6)
+```
+
+```{r}
+an <- function(a1, r, n){
+    a1 * r ** (n - 1)
+}
+an(a1=1, r=2, n=5)
+an(a1=4, r=-2, n=6)
+
+an(a1=1, r=2, n=1:4)
+```
+#Argumentos de una función
+
+#Los argumentos son valores de entrada de las funciones. Como ejemplo, en la función que creamos antes tenemos tres argumentos de entrada llamados a1, r y n. 
+
+```{r}
+area_rectangulo <- function(lado1, lado2) 
+{
+  area <- lado1 * lado2
+  print(paste("el área es ", area))
+}
+
+area_rectangulo(2, 3)
+"el área es  6"
+
+formals(area_rectangulo)
+
+```
+
+
+#consideraciones cuando se trata con este tipo de argumentos.
+
+#Si mantenemos el orden de entrada, no necesitamos llamar a los nombres de los argumentos. 
+
+```{r}
+
+an(a1 = 1, r = 2, n = 5) # Devuelve 16
+an(1, 2, 5) # Devuelve 16
+```
+#Si ponemos el nombre de los argumentos, podemos usar cualquier oden.
+
+```{r}
+an(r = 2, n = 5, a1 = 1) # Devuelve 16
+an(n = 5, r = 2, a1 = 1) # Devuelve 16
+```
+#Podemos usar la función args para conocer los argumentos de entrada de cualquier función que queramos usar.
+
+```{r}
+args(an)
+
+an
+
+```
+#Argumentos por valor
+
+
+```{r}
+nombre_función <- function(arg1, arg2, arg3 ) {
+        # Código
+}
+```
+
+#si queremos que arg2 y arg3 sean los valores a y b por defecto, podemos asignarlos en los argumentos de nuestra función.
+
+```{r}
+nombre_funcion <- function(arg1, arg2 = a, arg3 = b) {
+        # Código
+}
+
+
+```
+#La familia apply
+#La familia de funciones apply es usada para aplicar una función a cada elemento de una estructura de datos. En particular, es usada para aplicar funciones en matrices, data frames, arrays y listas. Con esta familia de funciones podemos automatizar tareas complejas usando poca líneas de código y es una de las características distintivas de R como lenguaje de programación. La familia de funciones apply no sólo recibe datos como argumentos, también recibe funciones
+
+#La familia apply esta formada por las siguientes funciones:
+
+apply()
+eapply()
+lapply()
+mapply()
+rapply()
+sapply()
+tapply()
+vapply()
+
+lapply
+#lapply() es un caso especial de apply(), diseñado para aplicar funciones a todos los elementos de una lista. La l de su nombre se refiere, precisamente, a lista.
+
+#lapply() intentará coercionar a una lista el objeto que demos como argumento y después aplicará una función a todos sus elementos.
+
+#lapply siempre nos devolverá una lista como resultado. A diferencia de apply, sabemos que siempre obtendremos ub objeto de tipo lista después de aplicar una función, sin importar cuál función sea.
+
+#La estructura de esta función es:
+
+lapply(X, FUN)
+
+#En donde:
+
+# X es una lista o un objeto coercionable a una lista.
+# FUN es la función a aplicar.
+
+
+```{r}
+trees[1:5, ]
+
+```
+#Aplicamos la función mean(), usando su nombre.
+
+
+```{r}
+lapply(X = trees, FUN = mean)
+```
+#En este ejemplo, obtuvimos la media de grueso (Girth), alto (Height) y volumen (Volume), como una lista.
+
+#Verificamos que la clase de nuestro resultado es una lista con class().
+
+```{r}
+arboles <- lapply(X = trees, FUN = mean)
+
+class(arboles)
+
+```
+```{r}
+#Si usamos lapply con una matriz, la función se aplicará a cada celda de la matriz, no a cada columna.
+
+#Creamos una matriz.
+
+matriz <- matrix(1:9, ncol = 3)
+
+matriz
+
+lapply(matriz, quantile, probs = .8)
+
+```
+sapply
+
+#Utilice la función sapply () cuando desee aplicar una función a cada elemento de una lista, vector o marco de datos y obtener un vector en lugar de una lista como resultado.
+
+#La sintaxis básica de la función sapply () es la siguiente:
+
+sapply (X, DIVERSIÓN)
+
+# X es el nombre de la lista, vector o data_frame
+# DIVERSIÓN es la operación específica que desea realizar
+
+```{r}
+data <- data.frame(a = c (1, 3, 7, 12, 9),
+                   b = c (4, 4, 6, 7, 8),
+                   c = c (14, 15, 11, 10, 6))
+
+
+data
+
+
+#multiplica los valores en cada columna por 2 y devuelve los resultados como una matriz
+ sapply (data, function(data) data * 2)
+
+```
+vapply
+
+Vapply
+#Devuelve un vector con la longitud que tiene cada una de las listas introducidas como parámetro.
+
+#Ejemplo
+
+```{r}
+x <- list(A = 1, B = 1:3, C = 1:7)
+
+x
+
+
+vapply(x, FUN = length, FUN.VALUE = 0L)
+ 
+```
+
+
+
+
+
