@@ -1,0 +1,226 @@
+# Homework-5
+
+# Descripción
+
+# Se le han compartido cuatro de los conjuntos de datos más comunes que utiliza la plataforma Stack Overflow (comunidad en línea más grande de desarrolladores).
+# ● questions.csv: Posee un identificador de pregunta, la puntuación de la pregunta en función de cuántas veces se ha votado a favor de la misma; los datos solo incluyen preguntas basadas en R.
+# ● answers.csv: Posee un identificador de respuesta, la puntuación y un ID que relaciona la respuesta con una pregunta específica.
+# ● tags.csv: Posee un identificador de etiqueta y el nombre de la etiqueta, que se pueden utilizar para identificar el tema de cada pregunta, como ggplot2 o dplyr.
+# ● question_tags.csv: Posee un identificador de etiqueta para cada pregunta y el ID de la pregunta.
+
+# Cargue cada set de datos y nombrelo según cada archivo.
+
+```{r}
+
+questions <- read.csv("questions.csv")
+answers <- read.csv("answers.csv")
+tags <- read.csv("tags.csv")
+question_tags <- read.csv("question_tags.csv")
+
+print(questions)
+
+```
+```{r}
+
+print(answers)
+
+```
+```{r}
+
+print(tags)
+
+```
+```{r}
+
+print(question_tags)
+
+```
+
+
+# 1. Left-joining questions and tags
+
+# Utilice left_joins en este ejercicio para asegurarse de mantener todas las preguntas, incluso aquellas sin un tag correspondiente.
+
+# 1.1. Relacione questions y question_tags usando las columnas id y question_id, respectivamente.
+
+```{r}
+
+library(dplyr)
+questions1_1 <- questions %>%
+  left_join(question_tags, by = c("id" = "question_id"))
+
+print(questions1_1)
+
+```
+
+# 1.2. Agregue una relación más para la tabla tags.
+```{r}
+
+questions1_2 <- questions1_1 %>%
+  left_join(tags, by = c("tag_id" = "id"))
+
+print(questions1_2)
+
+```
+
+
+# 1.3. Utilice replace_na para cambiar los NA en la columna tag_name a "only-r".
+
+```{r}
+
+library(tidyr)
+questions1_3 <- questions1_2 %>%
+  mutate(tag_name = replace_na(tag_name, "only-r"))
+
+```
+
+# 1.4. Por último, almacene el resultado en la variable "questions_with_tags".
+
+```{r}
+
+questions_with_tags <- questions1_3
+
+print(questions_with_tags)
+
+```
+
+
+# 2. Comparing scores across tags
+
+# Realice un breve análisis, para ello utilice verbos de la familia dplyr como group by, summarize, arrange y averigue el score promedio de las preguntas más frecuentes.
+
+# 2.1. Utilice questions_with_tags y aplique group_by para la variable tag_name.
+
+```{r}
+
+questions2_1 <- questions_with_tags %>%
+  group_by(tag_name)
+
+print(questions2_1)
+
+```
+
+
+# 2.2. Aplique summarize para obtener el score promedio de cada pregunta y asígnele el nombre mean_score.
+
+```{r}
+
+summary2_2 <- questions2_1 %>% summarize(mean_score = mean(score))
+
+print(summary2_2)
+
+```
+
+# 2.3. Ordene mean_score en forma descendente.
+
+```{r}
+
+desc_ord_summary2_2 <- summary2_2 %>%
+  arrange(desc(mean_score))
+
+print(desc_ord_summary2_2)
+
+```
+
+# 3. Finding gaps between questions and answers
+
+# Ahora uniremos questions con answers. Asegúrese de explorar las tablas y sus columnas en la consola antes de comenzar el ejercicio.
+
+# 3.1. Utilice inner_join para combinar las tablas questions y answers, luego aplique los sufijos "_question" y "_answer", respectivamente.
+
+```{r}
+
+combinacion3_1 <- inner_join(questions, answers, by = c("id" = "question_id"), suffix = c("_question", "_answer"))
+
+print(combinacion3_1)
+
+```
+
+# 3.2. Agregue una nueva columna utilizando la función mutate. La nueva columna se llamará gap y contendrá la resta de creation_date_answer y creation_date_question.
+
+```{r}
+
+gap3_2 <- combinacion3_1 %>% 
+  mutate(gap = as.Date(creation_date_answer) - as.Date(creation_date_question))
+
+print(gap3_2)
+
+```
+
+# 4. Joining question and answer counts
+
+# También podemos determinar cuántas preguntas realmente arrojan respuestas. Si contamos el número de respuestas para cada pregunta, podemos unir los conteos de respuestas con la tabla de preguntas.
+
+# 4.1. Cuente y ordene la columna question_id en la tabla de answers, luego almacene el resultado en la variable answer_counts.
+
+```{r}
+
+answer_counts <- answers %>% 
+  count(question_id, sort = TRUE)
+
+print(answer_counts)
+
+```
+
+# 4.2. Relacione la tabla questions con answer_counts (utilice left_join).
+
+```{r}
+
+relacion4_2 <- left_join(questions, answer_counts, by = c("id" = "question_id"))
+
+print(relacion4_2)
+
+```
+
+# 4.3. Reemplace los valores NA en la columna n con ceros.
+
+```{r}
+
+library(tidyr)
+replace4_3 <- relacion4_2 %>%
+  mutate(n = replace_na(n, 0))
+
+print(replace4_3)
+
+```
+
+# 4.4. Por último almacene el resultado en la variable question_answer_counts
+
+```{r}
+question_answer_counts <- replace4_3
+
+print(question_answer_counts)
+
+```
+
+# 5. Joining questions, answers, and tags
+
+# Identifiquemos qué temas de R generan más interés en Stack Overflow.
+
+# 5.1. Combine question_tags con question_answer_counts usando inner_join.
+
+```{r}
+
+combinacion5_1 <- inner_join(question_tags, question_answer_counts, by = c("question_id" = "id"))
+
+print(combinacion5_1)
+
+```
+
+# 5.2. Ahora, use otro inner_join para agregar la tabla tags.
+
+```{r}
+
+combinacion5_2 <- inner_join(combinacion5_1, tags, by = c("tag_id" = "id"))
+
+print(combinacion5_2)
+
+```
+
+# FIN
+
+#Entrega
+#● Dentro del repositorio Homeworks-R crear la carpeta Homework-5 y cargar el notebook según lo solicitado anteriormente.
+#● Se entrega el 07-julio hasta las 23:59
+
+ 
